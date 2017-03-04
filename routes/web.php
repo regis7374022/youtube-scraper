@@ -1,16 +1,21 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+Route::get('/api/youtube2mp3/{videoId}', function ($videoId) {
 
-Route::get('/', function () {
-    return view('welcome');
+    $outputDestination = '/home/splanger/projects/codelab/php/youtube-scraper/public/mp3';
+    $outputFormat = 'mp3';
+    $command = 'youtube-dl '
+        . '--extract-audio '
+        . '--audio-format=' . $outputFormat . ' '
+        . '--output=' . $outputDestination . '/' . $videoId . '.' . $outputFormat . ' '
+        . $videoId;
+
+    $result = exec($command);
+
+    $response = [
+        "video_id" => $videoId,
+        "download_url" => 'localhost:8000/mp3/' . $videoId . '.' . $outputFormat
+    ];
+
+    return json_encode($response);
 });
