@@ -7,7 +7,7 @@ namespace App\Providers;
  * Date: 3/4/17
  * Time: 6:09 PM
  */
-interface YouTubeConverter
+interface YouTubeConverterServiceProvider
 {
     public function saveConvertedVideo($videoUrl);
 }

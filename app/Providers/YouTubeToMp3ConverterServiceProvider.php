@@ -7,12 +7,12 @@ namespace App\Providers;
  * Date: 3/4/17
  * Time: 6:11 PM
  */
-class YouTubeToMp3Converter implements YouTubeConverter
+class YouTubeToMp3ConverterServiceProvider implements YouTubeConverterServiceProvider
 {
 
     public function saveConvertedVideo($videoUrl)
     {
-        $outputDestination = '/home/splanger/projects/codelab/php/youtube-scraper/app/storage/files';
+        $outputDestination = storage_path() . '/files';
         $outputFormat = 'mp3';
         $command = 'youtube-dl '
             . '--extract-audio '
@@ -22,6 +22,6 @@ class YouTubeToMp3Converter implements YouTubeConverter
 
         $result = exec($command);
 
-        return 'http://localhost:8000/' . storage_path() . '/files/' . $videoUrl . '.' . $outputFormat;
+        return env('APP_URL') . '/mp3/' . $videoUrl . '.' . $outputFormat;
     }
 }

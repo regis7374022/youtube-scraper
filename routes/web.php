@@ -1,21 +1,35 @@
 <?php
+use App\Providers;
+
 
 Route::get('/api/youtube2mp3/{videoId}', function ($videoId) {
 
-    $outputDestination = '/home/splanger/projects/codelab/php/youtube-scraper/public/mp3';
-    $outputFormat = 'mp3';
-    $command = 'youtube-dl '
-        . '--extract-audio '
-        . '--audio-format=' . $outputFormat . ' '
-        . '--output=' . $outputDestination . '/' . $videoId . '.' . $outputFormat . ' '
-        . $videoId;
-
-    $result = exec($command);
+    $youTubeConverter = new Providers\YouTubeToMp3ConverterServiceProvider();
 
     $response = [
         "video_id" => $videoId,
-        "download_url" => 'localhost:8000/mp3/' . $videoId . '.' . $outputFormat
+        "download_url" => $youTubeConverter->saveConvertedVideo($videoId)
     ];
 
-    return json_encode($response);
+    return json_encode($response, JSON_UNESCAPED_SLASHES);
+});
+
+
+Route::get('/mp3/{downloadId}', function ($downloadId) {
+
+    // Check if file exists in app/storage/files folder
+    $file_path = storage_path() .'/files/'. $downloadId;
+    if (file_exists($file_path))
+    {
+        // Send Download
+        return Response::download($file_path, $downloadId, [
+            'Content-Length: '. filesize($file_path)
+        ]);
+    }
+    else
+    {
+        // Error
+        exit('Requested file does not exist on our server!');
+    }
+
 });
